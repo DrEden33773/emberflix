@@ -17,33 +17,6 @@ pub(crate) enum User {
   Phone,
 }
 
-#[deprecated = "let frontend do this check"]
-#[allow(dead_code)]
-fn check_password(password: &str) -> bool {
-  if password.len() < 8 {
-    return false;
-  }
-
-  let mut has_upper = false;
-  let mut has_lower = false;
-  let mut has_digit = false;
-  let mut has_special = false;
-
-  for c in password.chars() {
-    if c.is_uppercase() {
-      has_upper = true;
-    } else if c.is_lowercase() {
-      has_lower = true;
-    } else if c.is_digit(10) {
-      has_digit = true;
-    } else {
-      has_special = true;
-    }
-  }
-
-  has_upper && has_lower && has_digit && has_special
-}
-
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
   async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
@@ -90,7 +63,15 @@ impl MigrationTrait for Migration {
           .col(ColumnDef::new(User::Phone).string().not_null())
           .to_owned(),
       )
-      .await
+      .await?;
+
+    Index::create()
+      .name("idx-user-user_name")
+      .index_type(IndexType::BTree)
+      .table(User::Table)
+      .col(User::Username);
+
+    Ok(())
   }
 
   async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {

@@ -69,7 +69,15 @@ impl MigrationTrait for Migration {
           )
           .to_owned(),
       )
-      .await
+      .await?;
+
+    Index::create()
+      .name("idx-media-title")
+      .index_type(IndexType::BTree)
+      .table(Media::Table)
+      .col(Media::Title);
+
+    Ok(())
   }
 
   async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {

@@ -70,11 +70,21 @@ impl MigrationTrait for Migration {
             ForeignKey::create()
               .name("fk-comment_on_comment-commented_id")
               .from(CommentOnComment::Table, CommentOnComment::CommentedID)
-              .to(Media::Table, Media::Id),
+              .to(Media::Table, Media::Id)
+              .on_delete(ForeignKeyAction::Restrict)
+              .on_update(ForeignKeyAction::Restrict),
           )
           .to_owned(),
       )
-      .await
+      .await?;
+
+    Index::create()
+      .index_type(IndexType::FullText)
+      .name("idx-comment_on_comment-content")
+      .table(CommentOnComment::Table)
+      .col(CommentOnComment::Content);
+
+    Ok(())
   }
 
   async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
