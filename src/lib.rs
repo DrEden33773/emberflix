@@ -1,4 +1,5 @@
 pub mod entities;
+pub mod logic;
 
 use dotenvy::dotenv;
 use sea_orm::*;
