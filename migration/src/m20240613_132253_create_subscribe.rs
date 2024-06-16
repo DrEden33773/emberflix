@@ -8,7 +8,6 @@ pub struct Migration;
 #[derive(DeriveIden)]
 enum Subscribe {
   Table,
-  Id,
   UserId,
   MediaId,
 }
@@ -21,15 +20,15 @@ impl MigrationTrait for Migration {
         Table::create()
           .table(Subscribe::Table)
           .if_not_exists()
-          .col(
-            ColumnDef::new(Subscribe::Id)
-              .big_integer()
-              .not_null()
-              .auto_increment()
-              .primary_key(),
-          )
           .col(ColumnDef::new(Subscribe::UserId).big_integer().not_null())
           .col(ColumnDef::new(Subscribe::MediaId).big_integer().not_null())
+          .primary_key(
+            Index::create()
+              .name("pk-user_subscribe_media")
+              .col(Subscribe::UserId)
+              .col(Subscribe::MediaId)
+              .primary(),
+          )
           .foreign_key(
             ForeignKey::create()
               .name("fk-subscribe-user_id")
@@ -41,6 +40,28 @@ impl MigrationTrait for Migration {
           .to_owned(),
       )
       .await?;
+
+    let user_id_idx = Index::create()
+      .index_type(IndexType::BTree)
+      .name("idx-subscribe-user_id")
+      .table(Subscribe::Table)
+      .col(Subscribe::UserId)
+      .to_owned();
+    let media_id_idx = Index::create()
+      .index_type(IndexType::BTree)
+      .name("idx-subscribe-media_id")
+      .table(Subscribe::Table)
+      .col(Subscribe::MediaId)
+      .to_owned();
+
+    manager
+      .get_connection()
+      .get_database_backend()
+      .build(&user_id_idx);
+    manager
+      .get_connection()
+      .get_database_backend()
+      .build(&media_id_idx);
 
     Ok(())
   }

@@ -8,6 +8,7 @@ mod m20240613_132154_create_tag;
 mod m20240613_132238_create_like;
 mod m20240613_132253_create_subscribe;
 mod m20240613_132301_create_follow;
+mod m20240616_114002_create_media_tag;
 
 pub struct Migrator;
 
@@ -23,6 +24,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20240613_132238_create_like::Migration),
             Box::new(m20240613_132253_create_subscribe::Migration),
             Box::new(m20240613_132301_create_follow::Migration),
+            Box::new(m20240616_114002_create_media_tag::Migration),
         ]
   }
 }

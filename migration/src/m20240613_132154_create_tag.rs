@@ -30,11 +30,14 @@ impl MigrationTrait for Migration {
       )
       .await?;
 
-    Index::create()
+    let idx = Index::create()
       .index_type(IndexType::BTree)
       .name("idx-tag-name")
       .table(Tag::Table)
-      .col(Tag::Name);
+      .col(Tag::Name)
+      .to_owned();
+
+    manager.get_connection().get_database_backend().build(&idx);
 
     Ok(())
   }

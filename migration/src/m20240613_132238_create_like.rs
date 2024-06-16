@@ -8,7 +8,6 @@ pub struct Migration;
 #[derive(DeriveIden)]
 enum Like {
   Table,
-  Id,
   UserId,
   MediaId,
 }
@@ -21,15 +20,15 @@ impl MigrationTrait for Migration {
         Table::create()
           .table(Like::Table)
           .if_not_exists()
-          .col(
-            ColumnDef::new(Like::Id)
-              .big_integer()
-              .not_null()
-              .auto_increment()
-              .primary_key(),
-          )
           .col(ColumnDef::new(Like::UserId).big_integer().not_null())
           .col(ColumnDef::new(Like::MediaId).big_integer().not_null())
+          .primary_key(
+            Index::create()
+              .name("pk-user_like_media")
+              .col(Like::UserId)
+              .col(Like::MediaId)
+              .primary(),
+          )
           .foreign_key(
             ForeignKey::create()
               .name("fk-like-user_id")
@@ -41,6 +40,28 @@ impl MigrationTrait for Migration {
           .to_owned(),
       )
       .await?;
+
+    let user_id_idx = Index::create()
+      .index_type(IndexType::BTree)
+      .name("idx-like-user_id")
+      .table(Like::Table)
+      .col(Like::UserId)
+      .to_owned();
+    let media_id_idx = Index::create()
+      .index_type(IndexType::BTree)
+      .name("idx-like-media_id")
+      .table(Like::Table)
+      .col(Like::MediaId)
+      .to_owned();
+
+    manager
+      .get_connection()
+      .get_database_backend()
+      .build(&user_id_idx);
+    manager
+      .get_connection()
+      .get_database_backend()
+      .build(&media_id_idx);
 
     Ok(())
   }

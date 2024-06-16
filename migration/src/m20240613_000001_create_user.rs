@@ -65,11 +65,14 @@ impl MigrationTrait for Migration {
       )
       .await?;
 
-    Index::create()
+    let idx = Index::create()
       .name("idx-user-user_name")
       .index_type(IndexType::BTree)
       .table(User::Table)
-      .col(User::Username);
+      .col(User::Username)
+      .to_owned();
+
+    manager.get_connection().get_database_backend().build(&idx);
 
     Ok(())
   }

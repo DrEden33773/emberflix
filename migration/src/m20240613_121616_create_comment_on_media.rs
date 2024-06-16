@@ -78,11 +78,14 @@ impl MigrationTrait for Migration {
       )
       .await?;
 
-    Index::create()
+    let idx = Index::create()
       .index_type(IndexType::FullText)
       .name("idx-comment_on_media-content")
       .table(CommentOnMedia::Table)
-      .col(CommentOnMedia::Content);
+      .col(CommentOnMedia::Content)
+      .to_owned();
+
+    manager.get_connection().get_database_backend().build(&idx);
 
     Ok(())
   }

@@ -71,11 +71,14 @@ impl MigrationTrait for Migration {
       )
       .await?;
 
-    Index::create()
+    let idx = Index::create()
       .name("idx-media-title")
       .index_type(IndexType::BTree)
       .table(Media::Table)
-      .col(Media::Title);
+      .col(Media::Title)
+      .to_owned();
+
+    manager.get_connection().get_database_backend().build(&idx);
 
     Ok(())
   }
