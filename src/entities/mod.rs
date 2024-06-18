@@ -4,5 +4,10 @@ pub mod prelude;
 
 pub mod comment_on_comment;
 pub mod comment_on_media;
+pub mod follow;
+pub mod like;
 pub mod media;
+pub mod media_tag;
+pub mod subscribe;
+pub mod tag;
 pub mod user;

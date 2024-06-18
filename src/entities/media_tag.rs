@@ -3,37 +3,32 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "comment_on_comment")]
+#[sea_orm(table_name = "media_tag")]
 pub struct Model {
-  #[sea_orm(primary_key)]
-  pub id: i64,
-  pub commenter_id: i64,
-  pub commented_id: i64,
-  #[sea_orm(column_type = "Text")]
-  pub content: String,
-  pub review_passed: bool,
-  pub requested_at: DateTime,
-  pub published_at: Option<DateTime>,
+  #[sea_orm(primary_key, auto_increment = false)]
+  pub media_id: i64,
+  #[sea_orm(primary_key, auto_increment = false)]
+  pub tag_id: i64,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
   #[sea_orm(
     belongs_to = "super::media::Entity",
-    from = "Column::CommentedId",
+    from = "Column::MediaId",
     to = "super::media::Column::Id",
     on_update = "Restrict",
     on_delete = "Restrict"
   )]
   Media,
   #[sea_orm(
-    belongs_to = "super::user::Entity",
-    from = "Column::CommenterId",
-    to = "super::user::Column::Id",
-    on_update = "NoAction",
-    on_delete = "NoAction"
+    belongs_to = "super::tag::Entity",
+    from = "Column::TagId",
+    to = "super::tag::Column::Id",
+    on_update = "Restrict",
+    on_delete = "Restrict"
   )]
-  User,
+  Tag,
 }
 
 impl Related<super::media::Entity> for Entity {
@@ -42,9 +37,9 @@ impl Related<super::media::Entity> for Entity {
   }
 }
 
-impl Related<super::user::Entity> for Entity {
+impl Related<super::tag::Entity> for Entity {
   fn to() -> RelationDef {
-    Relation::User.def()
+    Relation::Tag.def()
   }
 }
 

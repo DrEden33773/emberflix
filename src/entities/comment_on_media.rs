@@ -22,8 +22,8 @@ pub enum Relation {
     belongs_to = "super::media::Entity",
     from = "Column::MediaId",
     to = "super::media::Column::Id",
-    on_update = "NoAction",
-    on_delete = "NoAction"
+    on_update = "Restrict",
+    on_delete = "Restrict"
   )]
   Media,
   #[sea_orm(

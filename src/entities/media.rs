@@ -24,6 +24,8 @@ pub enum Relation {
   CommentOnComment,
   #[sea_orm(has_many = "super::comment_on_media::Entity")]
   CommentOnMedia,
+  #[sea_orm(has_many = "super::media_tag::Entity")]
+  MediaTag,
   #[sea_orm(
     belongs_to = "super::user::Entity",
     from = "Column::UploaderId",
@@ -46,9 +48,24 @@ impl Related<super::comment_on_media::Entity> for Entity {
   }
 }
 
+impl Related<super::media_tag::Entity> for Entity {
+  fn to() -> RelationDef {
+    Relation::MediaTag.def()
+  }
+}
+
 impl Related<super::user::Entity> for Entity {
   fn to() -> RelationDef {
     Relation::User.def()
+  }
+}
+
+impl Related<super::tag::Entity> for Entity {
+  fn to() -> RelationDef {
+    super::media_tag::Relation::Tag.def()
+  }
+  fn via() -> Option<RelationDef> {
+    Some(super::media_tag::Relation::Media.def().rev())
   }
 }
 

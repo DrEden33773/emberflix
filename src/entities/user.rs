@@ -24,8 +24,12 @@ pub enum Relation {
   CommentOnComment,
   #[sea_orm(has_many = "super::comment_on_media::Entity")]
   CommentOnMedia,
+  #[sea_orm(has_many = "super::like::Entity")]
+  Like,
   #[sea_orm(has_many = "super::media::Entity")]
   Media,
+  #[sea_orm(has_many = "super::subscribe::Entity")]
+  Subscribe,
 }
 
 impl Related<super::comment_on_comment::Entity> for Entity {
@@ -40,9 +44,21 @@ impl Related<super::comment_on_media::Entity> for Entity {
   }
 }
 
+impl Related<super::like::Entity> for Entity {
+  fn to() -> RelationDef {
+    Relation::Like.def()
+  }
+}
+
 impl Related<super::media::Entity> for Entity {
   fn to() -> RelationDef {
     Relation::Media.def()
+  }
+}
+
+impl Related<super::subscribe::Entity> for Entity {
+  fn to() -> RelationDef {
+    Relation::Subscribe.def()
   }
 }
 
