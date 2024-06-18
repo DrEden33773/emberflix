@@ -57,7 +57,7 @@ impl MigrationTrait for Migration {
           )
           .col(
             ColumnDef::new(CommentOnMedia::PublishedAt)
-              .date_time()
+              .timestamp()
               .null(),
           )
           .foreign_key(
