@@ -51,13 +51,13 @@ impl MigrationTrait for Migration {
           )
           .col(
             ColumnDef::new(CommentOnComment::RequestedAt)
-              .timestamp()
+              .date_time()
               .default(Expr::current_timestamp())
               .not_null(),
           )
           .col(
             ColumnDef::new(CommentOnComment::PublishedAt)
-              .timestamp()
+              .date_time()
               .null(),
           )
           .foreign_key(

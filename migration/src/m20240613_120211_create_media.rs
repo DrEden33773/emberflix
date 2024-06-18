@@ -56,11 +56,11 @@ impl MigrationTrait for Migration {
           )
           .col(
             ColumnDef::new(Media::RequestedAt)
-              .timestamp()
+              .date_time()
               .default(Expr::current_timestamp())
               .not_null(),
           )
-          .col(ColumnDef::new(Media::PublishedAt).timestamp().null())
+          .col(ColumnDef::new(Media::PublishedAt).date_time().null())
           .foreign_key(
             ForeignKey::create()
               .name("fk-media-uploader_id")
