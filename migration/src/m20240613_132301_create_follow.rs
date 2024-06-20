@@ -47,31 +47,7 @@ impl MigrationTrait for Migration {
           )
           .to_owned(),
       )
-      .await?;
-
-    let follower_id_idx = Index::create()
-      .index_type(IndexType::BTree)
-      .name("idx-follow-follower_id")
-      .table(Follow::Table)
-      .col(Follow::FollowerId)
-      .to_owned();
-    let followed_id_idx = Index::create()
-      .index_type(IndexType::BTree)
-      .name("idx-follow-followed_id")
-      .table(Follow::Table)
-      .col(Follow::FollowedId)
-      .to_owned();
-
-    manager
-      .get_connection()
-      .get_database_backend()
-      .build(&follower_id_idx);
-    manager
-      .get_connection()
-      .get_database_backend()
-      .build(&followed_id_idx);
-
-    Ok(())
+      .await
   }
 
   async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {

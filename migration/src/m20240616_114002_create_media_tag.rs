@@ -47,31 +47,7 @@ impl MigrationTrait for Migration {
           )
           .to_owned(),
       )
-      .await?;
-
-    let media_id_idx = Index::create()
-      .index_type(IndexType::BTree)
-      .name("idx-media_tag-media_id")
-      .table(MediaTag::Table)
-      .col(MediaTag::MediaId)
-      .to_owned();
-    let tag_id_idx = Index::create()
-      .index_type(IndexType::BTree)
-      .name("idx-media_tag-tag_id")
-      .table(MediaTag::Table)
-      .col(MediaTag::TagId)
-      .to_owned();
-
-    manager
-      .get_connection()
-      .get_database_backend()
-      .build(&media_id_idx);
-    manager
-      .get_connection()
-      .get_database_backend()
-      .build(&tag_id_idx);
-
-    Ok(())
+      .await
   }
 
   async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {

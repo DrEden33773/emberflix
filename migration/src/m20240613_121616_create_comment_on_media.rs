@@ -78,16 +78,17 @@ impl MigrationTrait for Migration {
       )
       .await?;
 
-    let idx = Index::create()
-      .index_type(IndexType::FullText)
-      .name("idx-comment_on_media-content")
-      .table(CommentOnMedia::Table)
-      .col(CommentOnMedia::Content)
-      .to_owned();
-
-    manager.get_connection().get_database_backend().build(&idx);
-
-    Ok(())
+    manager
+      .create_index(
+        Index::create()
+          .if_not_exists()
+          .name("idx-comment_on_media-published_at")
+          .index_type(IndexType::BTree)
+          .table(CommentOnMedia::Table)
+          .col(CommentOnMedia::PublishedAt)
+          .to_owned(),
+      )
+      .await
   }
 
   async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {

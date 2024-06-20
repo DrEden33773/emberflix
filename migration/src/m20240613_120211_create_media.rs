@@ -71,16 +71,29 @@ impl MigrationTrait for Migration {
       )
       .await?;
 
-    let idx = Index::create()
-      .name("idx-media-title")
-      .index_type(IndexType::BTree)
-      .table(Media::Table)
-      .col(Media::Title)
-      .to_owned();
+    manager
+      .create_index(
+        Index::create()
+          .if_not_exists()
+          .name("idx-media-title")
+          .index_type(IndexType::BTree)
+          .table(Media::Table)
+          .col(Media::Title)
+          .to_owned(),
+      )
+      .await?;
 
-    manager.get_connection().get_database_backend().build(&idx);
-
-    Ok(())
+    manager
+      .create_index(
+        Index::create()
+          .if_not_exists()
+          .name("idx-media-published_at")
+          .index_type(IndexType::BTree)
+          .table(Media::Table)
+          .col(Media::PublishedAt)
+          .to_owned(),
+      )
+      .await
   }
 
   async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {

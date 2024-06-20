@@ -39,31 +39,7 @@ impl MigrationTrait for Migration {
           )
           .to_owned(),
       )
-      .await?;
-
-    let user_id_idx = Index::create()
-      .index_type(IndexType::BTree)
-      .name("idx-like-user_id")
-      .table(Like::Table)
-      .col(Like::UserId)
-      .to_owned();
-    let media_id_idx = Index::create()
-      .index_type(IndexType::BTree)
-      .name("idx-like-media_id")
-      .table(Like::Table)
-      .col(Like::MediaId)
-      .to_owned();
-
-    manager
-      .get_connection()
-      .get_database_backend()
-      .build(&user_id_idx);
-    manager
-      .get_connection()
-      .get_database_backend()
-      .build(&media_id_idx);
-
-    Ok(())
+      .await
   }
 
   async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {

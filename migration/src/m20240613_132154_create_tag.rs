@@ -30,16 +30,17 @@ impl MigrationTrait for Migration {
       )
       .await?;
 
-    let idx = Index::create()
-      .index_type(IndexType::BTree)
-      .name("idx-tag-name")
-      .table(Tag::Table)
-      .col(Tag::Name)
-      .to_owned();
-
-    manager.get_connection().get_database_backend().build(&idx);
-
-    Ok(())
+    manager
+      .create_index(
+        Index::create()
+          .if_not_exists()
+          .index_type(IndexType::BTree)
+          .name("idx-tag-name")
+          .table(Tag::Table)
+          .col(Tag::Name)
+          .to_owned(),
+      )
+      .await
   }
 
   async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {

@@ -65,16 +65,17 @@ impl MigrationTrait for Migration {
       )
       .await?;
 
-    let idx = Index::create()
-      .name("idx-user-user_name")
-      .index_type(IndexType::BTree)
-      .table(User::Table)
-      .col(User::Username)
-      .to_owned();
-
-    manager.get_connection().get_database_backend().build(&idx);
-
-    Ok(())
+    manager
+      .create_index(
+        Index::create()
+          .if_not_exists()
+          .name("idx-user-user_name")
+          .index_type(IndexType::BTree)
+          .table(User::Table)
+          .col(User::Username)
+          .to_owned(),
+      )
+      .await
   }
 
   async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
