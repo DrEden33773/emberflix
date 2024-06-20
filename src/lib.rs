@@ -1,5 +1,6 @@
 pub mod entities;
 pub mod handler;
+pub mod logic;
 pub mod router;
 
 use dotenvy::dotenv;

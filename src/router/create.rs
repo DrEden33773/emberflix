@@ -1,12 +1,8 @@
 #![allow(clippy::too_many_arguments)]
 
-use crate::{
-  entities::{prelude::*, *},
-  handler::ErrorResponder,
-};
+use crate::{handler::ErrorResponder, logic::create};
 use rocket::*;
-use sea_orm::{entity::prelude::*, *};
-use std::str::FromStr;
+use sea_orm::entity::prelude::*;
 
 #[post("/user?<user_type>&<username>&<password>&<display_name>&<birth_date>&<gender>&<phone>")]
 pub async fn create_user(
@@ -21,21 +17,18 @@ pub async fn create_user(
 ) -> Result<(), ErrorResponder> {
   let db = db as &DatabaseConnection;
 
-  let new_user = user::ActiveModel {
-    user_type: Set(user_type.into()),
-    username: Set(username.into()),
-    password: Set(password.into()),
-    display_name: Set(display_name.into()),
-    birth_date: Set(Date::from_str(birth_date).unwrap()),
-    gender: Set(gender.into()),
-    phone: Set(phone.into()),
-    ..Default::default()
-  };
-
-  User::insert(new_user)
-    .exec(db)
-    .await
-    .map_err(Into::<ErrorResponder>::into)?;
+  create::create_user(
+    db,
+    user_type,
+    username,
+    password,
+    display_name,
+    birth_date,
+    gender,
+    phone,
+  )
+  .await
+  .map_err(Into::<ErrorResponder>::into)?;
 
   Ok(())
 }

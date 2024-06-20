@@ -25,7 +25,7 @@ impl MigrationTrait for Migration {
               .auto_increment()
               .primary_key(),
           )
-          .col(ColumnDef::new(Tag::Name).string().not_null())
+          .col(ColumnDef::new(Tag::Name).string().unique_key().not_null())
           .to_owned(),
       )
       .await?;
