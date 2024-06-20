@@ -8,8 +8,8 @@ pub struct Migration;
 #[derive(DeriveIden)]
 pub(crate) enum Follow {
   Table,
-  FollowerId,
-  FollowedId,
+  SrcId,
+  DstId,
 }
 
 #[async_trait::async_trait]
@@ -20,27 +20,27 @@ impl MigrationTrait for Migration {
         Table::create()
           .table(Follow::Table)
           .if_not_exists()
-          .col(ColumnDef::new(Follow::FollowerId).big_integer().not_null())
-          .col(ColumnDef::new(Follow::FollowedId).big_integer().not_null())
+          .col(ColumnDef::new(Follow::SrcId).big_integer().not_null())
+          .col(ColumnDef::new(Follow::DstId).big_integer().not_null())
           .primary_key(
             Index::create()
               .name("pk-user_follow_user")
-              .col(Follow::FollowerId)
-              .col(Follow::FollowedId)
+              .col(Follow::SrcId)
+              .col(Follow::DstId)
               .primary(),
           )
           .foreign_key(
             ForeignKey::create()
-              .name("fk-follow-follower_id")
-              .from(Follow::Table, Follow::FollowerId)
+              .name("fk-follow-src_id")
+              .from(Follow::Table, Follow::SrcId)
               .to(User::Table, User::Id)
               .on_delete(ForeignKeyAction::Cascade)
               .on_update(ForeignKeyAction::Cascade),
           )
           .foreign_key(
             ForeignKey::create()
-              .name("fk-follow-followed_id")
-              .from(Follow::Table, Follow::FollowedId)
+              .name("fk-follow-dst_id")
+              .from(Follow::Table, Follow::DstId)
               .to(User::Table, User::Id)
               .on_delete(ForeignKeyAction::Cascade)
               .on_update(ForeignKeyAction::Cascade),
