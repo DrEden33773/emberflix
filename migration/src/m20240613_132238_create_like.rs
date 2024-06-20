@@ -34,8 +34,8 @@ impl MigrationTrait for Migration {
               .name("fk-like-user_id")
               .from(Like::Table, Like::UserId)
               .to(User::Table, User::Id)
-              .on_delete(ForeignKeyAction::Restrict)
-              .on_update(ForeignKeyAction::Restrict),
+              .on_delete(ForeignKeyAction::Cascade)
+              .on_update(ForeignKeyAction::Cascade),
           )
           .to_owned(),
       )

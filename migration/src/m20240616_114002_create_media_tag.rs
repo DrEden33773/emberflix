@@ -34,16 +34,16 @@ impl MigrationTrait for Migration {
               .name("fk-media_tag-media_id")
               .from(MediaTag::Table, MediaTag::MediaId)
               .to(Media::Table, Media::Id)
-              .on_delete(ForeignKeyAction::Restrict)
-              .on_update(ForeignKeyAction::Restrict),
+              .on_delete(ForeignKeyAction::Cascade)
+              .on_update(ForeignKeyAction::Cascade),
           )
           .foreign_key(
             ForeignKey::create()
               .name("fk-media_tag-tag_id")
               .from(MediaTag::Table, MediaTag::TagId)
               .to(Tag::Table, Tag::Id)
-              .on_delete(ForeignKeyAction::Restrict)
-              .on_update(ForeignKeyAction::Restrict),
+              .on_delete(ForeignKeyAction::Cascade)
+              .on_update(ForeignKeyAction::Cascade),
           )
           .to_owned(),
       )

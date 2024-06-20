@@ -64,15 +64,17 @@ impl MigrationTrait for Migration {
             ForeignKey::create()
               .name("fk-comment_on_media-commenter_id")
               .from(CommentOnMedia::Table, CommentOnMedia::CommenterID)
-              .to(User::Table, User::Id),
+              .to(User::Table, User::Id)
+              .on_delete(ForeignKeyAction::Cascade)
+              .on_update(ForeignKeyAction::Cascade),
           )
           .foreign_key(
             ForeignKey::create()
               .name("fk-comment_on_media-media_id")
               .from(CommentOnMedia::Table, CommentOnMedia::MediaID)
               .to(Media::Table, Media::Id)
-              .on_delete(ForeignKeyAction::Restrict)
-              .on_update(ForeignKeyAction::Restrict),
+              .on_delete(ForeignKeyAction::Cascade)
+              .on_update(ForeignKeyAction::Cascade),
           )
           .to_owned(),
       )

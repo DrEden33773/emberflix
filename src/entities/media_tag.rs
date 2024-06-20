@@ -17,16 +17,16 @@ pub enum Relation {
     belongs_to = "super::media::Entity",
     from = "Column::MediaId",
     to = "super::media::Column::Id",
-    on_update = "Restrict",
-    on_delete = "Restrict"
+    on_update = "Cascade",
+    on_delete = "Cascade"
   )]
   Media,
   #[sea_orm(
     belongs_to = "super::tag::Entity",
     from = "Column::TagId",
     to = "super::tag::Column::Id",
-    on_update = "Restrict",
-    on_delete = "Restrict"
+    on_update = "Cascade",
+    on_delete = "Cascade"
   )]
   Tag,
 }

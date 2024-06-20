@@ -34,16 +34,16 @@ impl MigrationTrait for Migration {
               .name("fk-follow-follower_id")
               .from(Follow::Table, Follow::FollowerId)
               .to(User::Table, User::Id)
-              .on_delete(ForeignKeyAction::Restrict)
-              .on_update(ForeignKeyAction::Restrict),
+              .on_delete(ForeignKeyAction::Cascade)
+              .on_update(ForeignKeyAction::Cascade),
           )
           .foreign_key(
             ForeignKey::create()
               .name("fk-follow-followed_id")
               .from(Follow::Table, Follow::FollowedId)
               .to(User::Table, User::Id)
-              .on_delete(ForeignKeyAction::Restrict)
-              .on_update(ForeignKeyAction::Restrict),
+              .on_delete(ForeignKeyAction::Cascade)
+              .on_update(ForeignKeyAction::Cascade),
           )
           .to_owned(),
       )

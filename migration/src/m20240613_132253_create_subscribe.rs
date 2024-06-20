@@ -34,8 +34,8 @@ impl MigrationTrait for Migration {
               .name("fk-subscribe-user_id")
               .from(Subscribe::Table, Subscribe::UserId)
               .to(User::Table, User::Id)
-              .on_delete(ForeignKeyAction::Restrict)
-              .on_update(ForeignKeyAction::Restrict),
+              .on_delete(ForeignKeyAction::Cascade)
+              .on_update(ForeignKeyAction::Cascade),
           )
           .to_owned(),
       )

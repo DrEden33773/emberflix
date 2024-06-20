@@ -65,7 +65,9 @@ impl MigrationTrait for Migration {
             ForeignKey::create()
               .name("fk-media-uploader_id")
               .from(Media::Table, Media::UploaderID)
-              .to(User::Table, User::Id),
+              .to(User::Table, User::Id)
+              .on_delete(ForeignKeyAction::Cascade)
+              .on_update(ForeignKeyAction::Cascade),
           )
           .to_owned(),
       )
