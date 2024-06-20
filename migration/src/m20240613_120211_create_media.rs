@@ -89,6 +89,30 @@ impl MigrationTrait for Migration {
       .create_index(
         Index::create()
           .if_not_exists()
+          .name("idx-media-media_type")
+          .index_type(IndexType::Hash)
+          .table(Media::Table)
+          .col(Media::MediaType)
+          .to_owned(),
+      )
+      .await?;
+
+    manager
+      .create_index(
+        Index::create()
+          .if_not_exists()
+          .name("idx-media-published_at")
+          .index_type(IndexType::BTree)
+          .table(Media::Table)
+          .col(Media::PublishedAt)
+          .to_owned(),
+      )
+      .await?;
+
+    manager
+      .create_index(
+        Index::create()
+          .if_not_exists()
           .name("idx-media-published_at")
           .index_type(IndexType::BTree)
           .table(Media::Table)

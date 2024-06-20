@@ -6,10 +6,10 @@ use crate::m20240613_000001_create_user::User;
 pub struct Migration;
 
 #[derive(DeriveIden)]
-enum Subscribe {
+pub(crate) enum Subscribe {
   Table,
-  UserId,
-  MediaId,
+  SrcId,
+  DstId,
 }
 
 #[async_trait::async_trait]
@@ -20,19 +20,27 @@ impl MigrationTrait for Migration {
         Table::create()
           .table(Subscribe::Table)
           .if_not_exists()
-          .col(ColumnDef::new(Subscribe::UserId).big_integer().not_null())
-          .col(ColumnDef::new(Subscribe::MediaId).big_integer().not_null())
+          .col(ColumnDef::new(Subscribe::SrcId).big_integer().not_null())
+          .col(ColumnDef::new(Subscribe::DstId).big_integer().not_null())
           .primary_key(
             Index::create()
-              .name("pk-user_subscribe_media")
-              .col(Subscribe::UserId)
-              .col(Subscribe::MediaId)
+              .name("pk-user_subscribe_user")
+              .col(Subscribe::SrcId)
+              .col(Subscribe::DstId)
               .primary(),
           )
           .foreign_key(
             ForeignKey::create()
-              .name("fk-subscribe-user_id")
-              .from(Subscribe::Table, Subscribe::UserId)
+              .name("fk-subscribe-src_id")
+              .from(Subscribe::Table, Subscribe::SrcId)
+              .to(User::Table, User::Id)
+              .on_delete(ForeignKeyAction::Cascade)
+              .on_update(ForeignKeyAction::Cascade),
+          )
+          .foreign_key(
+            ForeignKey::create()
+              .name("fk-subscribe-dst_id")
+              .from(Subscribe::Table, Subscribe::DstId)
               .to(User::Table, User::Id)
               .on_delete(ForeignKeyAction::Cascade)
               .on_update(ForeignKeyAction::Cascade),

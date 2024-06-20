@@ -69,10 +69,58 @@ impl MigrationTrait for Migration {
       .create_index(
         Index::create()
           .if_not_exists()
+          .name("idx-user-user_type")
+          .index_type(IndexType::Hash)
+          .table(User::Table)
+          .col(User::UserType)
+          .to_owned(),
+      )
+      .await?;
+
+    manager
+      .create_index(
+        Index::create()
+          .if_not_exists()
           .name("idx-user-user_name")
           .index_type(IndexType::BTree)
           .table(User::Table)
           .col(User::Username)
+          .to_owned(),
+      )
+      .await?;
+
+    manager
+      .create_index(
+        Index::create()
+          .if_not_exists()
+          .name("idx-user-birth_date")
+          .index_type(IndexType::BTree)
+          .table(User::Table)
+          .col(User::BirthDate)
+          .to_owned(),
+      )
+      .await?;
+
+    manager
+      .create_index(
+        Index::create()
+          .if_not_exists()
+          .name("idx-user-gender")
+          .index_type(IndexType::Hash)
+          .table(User::Table)
+          .col(User::Gender)
+          .to_owned(),
+      )
+      .await?;
+
+    manager
+      .create_index(
+        Index::create()
+          .if_not_exists()
+          .name("idx-user-phone")
+          .index_type(IndexType::BTree)
+          .table(User::Table)
+          .col(User::Phone)
           .to_owned(),
       )
       .await

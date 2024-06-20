@@ -51,50 +51,26 @@ pub async fn delete_comment_on_comment_tree_by_ids(
     .await
 }
 
-pub async fn cancel_media_tag_by_ids(
+pub async fn cancel_many_media_tag_by_id(
   db: &DatabaseConnection,
-  media_ids: Vec<i64>,
+  media_id: i64,
   tag_ids: Vec<i64>,
 ) -> Result<DeleteResult, DbErr> {
   MediaTag::delete_many()
-    .filter(Expr::col(media_tag::Column::MediaId).is_in(media_ids))
+    .filter(Expr::col(media_tag::Column::MediaId).eq(media_id))
     .filter(Expr::col(media_tag::Column::TagId).is_in(tag_ids))
     .exec(db)
     .await
 }
 
-pub async fn cancel_follow_by_ids(
+pub async fn cancel_many_like_by_id(
   db: &DatabaseConnection,
-  follower_ids: Vec<i64>,
-  followed_ids: Vec<i64>,
-) -> Result<DeleteResult, DbErr> {
-  Follow::delete_many()
-    .filter(Expr::col(follow::Column::FollowedId).is_in(follower_ids))
-    .filter(Expr::col(follow::Column::FollowedId).is_in(followed_ids))
-    .exec(db)
-    .await
-}
-
-pub async fn cancel_like_by_ids(
-  db: &DatabaseConnection,
-  user_ids: Vec<i64>,
+  user_id: i64,
   media_ids: Vec<i64>,
 ) -> Result<DeleteResult, DbErr> {
   Like::delete_many()
-    .filter(Expr::col(like::Column::UserId).is_in(user_ids))
+    .filter(Expr::col(like::Column::UserId).eq(user_id))
     .filter(Expr::col(like::Column::MediaId).is_in(media_ids))
-    .exec(db)
-    .await
-}
-
-pub async fn cancel_subscription_by_ids(
-  db: &DatabaseConnection,
-  user_ids: Vec<i64>,
-  media_ids: Vec<i64>,
-) -> Result<DeleteResult, DbErr> {
-  Subscribe::delete_many()
-    .filter(Expr::col(subscribe::Column::UserId).is_in(user_ids))
-    .filter(Expr::col(subscribe::Column::MediaId).is_in(media_ids))
     .exec(db)
     .await
 }

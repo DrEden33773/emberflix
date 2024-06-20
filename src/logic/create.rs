@@ -126,19 +126,6 @@ pub async fn create_comment_on_comment(
   CommentOnComment::insert(model).exec(db).await
 }
 
-pub async fn user_follow_user(
-  db: &DatabaseConnection,
-  follower_id: i64,
-  followed_id: i64,
-) -> Result<InsertResult<follow::ActiveModel>, DbErr> {
-  let model = follow::ActiveModel {
-    follower_id: Set(follower_id),
-    followed_id: Set(followed_id),
-  };
-
-  Follow::insert(model).exec(db).await
-}
-
 pub async fn user_like_media(
   db: &DatabaseConnection,
   user_id: i64,
@@ -150,17 +137,4 @@ pub async fn user_like_media(
   };
 
   Like::insert(model).exec(db).await
-}
-
-pub async fn user_subscribe_media(
-  db: &DatabaseConnection,
-  user_id: i64,
-  media_id: i64,
-) -> Result<InsertResult<subscribe::ActiveModel>, DbErr> {
-  let model = subscribe::ActiveModel {
-    user_id: Set(user_id),
-    media_id: Set(media_id),
-  };
-
-  Subscribe::insert(model).exec(db).await
 }

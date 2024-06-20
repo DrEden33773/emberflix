@@ -2,7 +2,7 @@
 
 pub use super::comment_on_comment::Entity as CommentOnComment;
 pub use super::comment_on_media::Entity as CommentOnMedia;
-pub use super::follow::Entity as Follow;
+pub use super::favorite::Entity as Favorite;
 pub use super::like::Entity as Like;
 pub use super::media::Entity as Media;
 pub use super::media_tag::Entity as MediaTag;

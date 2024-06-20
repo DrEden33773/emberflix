@@ -4,7 +4,7 @@ pub mod prelude;
 
 pub mod comment_on_comment;
 pub mod comment_on_media;
-pub mod follow;
+pub mod favorite;
 pub mod like;
 pub mod media;
 pub mod media_tag;

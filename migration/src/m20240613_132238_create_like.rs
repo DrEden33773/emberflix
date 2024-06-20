@@ -1,6 +1,6 @@
 use sea_orm_migration::prelude::*;
 
-use crate::m20240613_000001_create_user::User;
+use crate::{m20240613_000001_create_user::User, m20240613_120211_create_media::Media};
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -34,6 +34,14 @@ impl MigrationTrait for Migration {
               .name("fk-like-user_id")
               .from(Like::Table, Like::UserId)
               .to(User::Table, User::Id)
+              .on_delete(ForeignKeyAction::Cascade)
+              .on_update(ForeignKeyAction::Cascade),
+          )
+          .foreign_key(
+            ForeignKey::create()
+              .name("fk-like-media_id")
+              .from(Like::Table, Like::MediaId)
+              .to(Media::Table, Media::Id)
               .on_delete(ForeignKeyAction::Cascade)
               .on_update(ForeignKeyAction::Cascade),
           )
