@@ -31,22 +31,12 @@ pub async fn delete_tag_by_ids(
     .await
 }
 
-pub async fn delete_comment_on_media_tree_by_ids(
+pub async fn delete_comment_tree_by_ids(
   db: &DatabaseConnection,
   ids: Vec<i64>,
 ) -> Result<DeleteResult, DbErr> {
-  CommentOnMedia::delete_many()
-    .filter(Expr::col(comment_on_media::Column::Id).is_in(ids))
-    .exec(db)
-    .await
-}
-
-pub async fn delete_comment_on_comment_tree_by_ids(
-  db: &DatabaseConnection,
-  ids: Vec<i64>,
-) -> Result<DeleteResult, DbErr> {
-  CommentOnComment::delete_many()
-    .filter(Expr::col(comment_on_comment::Column::Id).is_in(ids))
+  Comment::delete_many()
+    .filter(Expr::col(comment::Column::Id).is_in(ids))
     .exec(db)
     .await
 }

@@ -94,36 +94,36 @@ pub async fn create_media(
 
 pub async fn create_comment_on_media(
   db: &DatabaseConnection,
-  commenter_id: i64,
+  user_id: i64,
   media_id: i64,
   content: &str,
-) -> Result<InsertResult<comment_on_media::ActiveModel>, DbErr> {
-  let model = comment_on_media::ActiveModel {
-    commenter_id: Set(commenter_id),
-    media_id: Set(media_id),
+) -> Result<InsertResult<comment::ActiveModel>, DbErr> {
+  let model = comment::ActiveModel {
+    user_id: Set(user_id),
+    media_id: Set(media_id.into()),
     content: Set(content.into()),
     review_passed: Set(false),
     ..Default::default()
   };
 
-  CommentOnMedia::insert(model).exec(db).await
+  Comment::insert(model).exec(db).await
 }
 
 pub async fn create_comment_on_comment(
   db: &DatabaseConnection,
-  commenter_id: i64,
-  commented_id: i64,
+  user_id: i64,
+  comment_id: i64,
   content: &str,
-) -> Result<InsertResult<comment_on_comment::ActiveModel>, DbErr> {
-  let model = comment_on_comment::ActiveModel {
-    commenter_id: Set(commenter_id),
-    commented_id: Set(commented_id),
+) -> Result<InsertResult<comment::ActiveModel>, DbErr> {
+  let model = comment::ActiveModel {
+    user_id: Set(user_id),
+    comment_id: Set(comment_id.into()),
     content: Set(content.into()),
     review_passed: Set(false),
     ..Default::default()
   };
 
-  CommentOnComment::insert(model).exec(db).await
+  Comment::insert(model).exec(db).await
 }
 
 pub async fn user_like_media(

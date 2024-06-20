@@ -1,5 +1,7 @@
 use crate::entities::{prelude::*, *};
 use sea_orm::{entity::prelude::*, *};
+use subscribe::Relation::User1 as SrcUser;
+use subscribe::Relation::User2 as DstUser;
 
 pub async fn get_all_user(
   db: &DatabaseConnection,
@@ -25,39 +27,30 @@ pub async fn get_all_tag(
 pub async fn get_all_comment_on_media(
   db: &DatabaseConnection,
   limit: Option<u64>,
-) -> Result<Vec<comment_on_media::Model>, DbErr> {
-  CommentOnMedia::find().limit(limit).all(db).await
-}
-
-pub async fn get_all_comment_on_comment(
-  db: &DatabaseConnection,
-  limit: Option<u64>,
-) -> Result<Vec<comment_on_comment::Model>, DbErr> {
-  CommentOnComment::find().limit(limit).all(db).await
-}
-
-pub async fn get_direct_comment_on_one_media(
-  db: &DatabaseConnection,
-  id: i64,
-  limit: Option<u64>,
-) -> Result<Vec<(media::Model, Vec<comment_on_media::Model>)>, DbErr> {
-  Media::find_by_id(id)
-    .find_with_related(CommentOnMedia)
+) -> Result<Vec<comment::Model>, DbErr> {
+  Comment::find()
+    .filter(comment::Column::MediaId.is_not_null())
     .limit(limit)
     .all(db)
     .await
 }
 
-pub struct CommentPath {
-  pub comment_on_comment_list: Vec<comment_on_comment::Model>,
-  pub root_comment_on_media: comment_on_media::Model,
+pub async fn get_all_comment_on_comment(
+  db: &DatabaseConnection,
+  limit: Option<u64>,
+) -> Result<Vec<comment::Model>, DbErr> {
+  Comment::find()
+    .filter(comment::Column::CommentId.is_not_null())
+    .limit(limit)
+    .all(db)
+    .await
 }
 
-pub async fn get_full_comment_path_of(
+pub async fn get_all_comment(
   db: &DatabaseConnection,
-  id: i64,
-) -> Result<CommentPath, DbErr> {
-  todo!()
+  limit: Option<u64>,
+) -> Result<Vec<comment::Model>, DbErr> {
+  Comment::find().limit(limit).all(db).await
 }
 
 pub async fn get_ones_subscribing_names(
@@ -219,10 +212,7 @@ impl Linked for UserSubscribeUser {
   type ToEntity = user::Entity;
 
   fn link(&self) -> Vec<sea_orm::LinkDef> {
-    vec![
-      subscribe::Relation::SrcUser.def().rev(),
-      subscribe::Relation::DstUser.def(),
-    ]
+    vec![SrcUser.def().rev(), DstUser.def()]
   }
 }
 
@@ -233,9 +223,6 @@ impl Linked for UserSubscribedByUser {
   type ToEntity = user::Entity;
 
   fn link(&self) -> Vec<sea_orm::LinkDef> {
-    vec![
-      subscribe::Relation::DstUser.def().rev(),
-      subscribe::Relation::SrcUser.def(),
-    ]
+    vec![DstUser.def().rev(), SrcUser.def()]
   }
 }

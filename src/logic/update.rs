@@ -161,32 +161,46 @@ pub async fn pass_media_review(db: &DatabaseConnection, id: i64) -> Result<media
   let model = media::ActiveModel {
     id: Set(id),
     review_passed: Set(true),
+    published_at: Set(Utc::now().naive_utc().into()),
     ..Default::default()
   };
 
   model.update(db).await
 }
 
-pub async fn pass_comment_on_media_review(
-  db: &DatabaseConnection,
-  id: i64,
-) -> Result<comment_on_media::Model, DbErr> {
-  let model = comment_on_media::ActiveModel {
+pub async fn reject_media_review(db: &DatabaseConnection, id: i64) -> Result<media::Model, DbErr> {
+  let model = media::ActiveModel {
     id: Set(id),
-    review_passed: Set(true),
+    review_passed: Set(false),
+    published_at: Set(None),
     ..Default::default()
   };
 
   model.update(db).await
 }
 
-pub async fn pass_comment_on_comment_review(
+pub async fn pass_comment_review(
   db: &DatabaseConnection,
   id: i64,
-) -> Result<comment_on_comment::Model, DbErr> {
-  let model = comment_on_comment::ActiveModel {
+) -> Result<comment::Model, DbErr> {
+  let model = comment::ActiveModel {
     id: Set(id),
     review_passed: Set(true),
+    published_at: Set(Utc::now().naive_utc().into()),
+    ..Default::default()
+  };
+
+  model.update(db).await
+}
+
+pub async fn reject_comment_review(
+  db: &DatabaseConnection,
+  id: i64,
+) -> Result<comment::Model, DbErr> {
+  let model = comment::ActiveModel {
+    id: Set(id),
+    review_passed: Set(false),
+    published_at: Set(None),
     ..Default::default()
   };
 

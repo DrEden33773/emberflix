@@ -3,12 +3,13 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "comment_on_comment")]
+#[sea_orm(table_name = "comment")]
 pub struct Model {
   #[sea_orm(primary_key)]
   pub id: i64,
-  pub commenter_id: i64,
-  pub commented_id: i64,
+  pub user_id: i64,
+  pub media_id: Option<i64>,
+  pub comment_id: Option<i64>,
   #[sea_orm(column_type = "Text")]
   pub content: String,
   pub review_passed: bool,
@@ -19,8 +20,16 @@ pub struct Model {
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
   #[sea_orm(
+    belongs_to = "Entity",
+    from = "Column::CommentId",
+    to = "Column::Id",
+    on_update = "Cascade",
+    on_delete = "Cascade"
+  )]
+  SelfRef,
+  #[sea_orm(
     belongs_to = "super::media::Entity",
-    from = "Column::CommentedId",
+    from = "Column::MediaId",
     to = "super::media::Column::Id",
     on_update = "Cascade",
     on_delete = "Cascade"
@@ -28,7 +37,7 @@ pub enum Relation {
   Media,
   #[sea_orm(
     belongs_to = "super::user::Entity",
-    from = "Column::CommenterId",
+    from = "Column::UserId",
     to = "super::user::Column::Id",
     on_update = "Cascade",
     on_delete = "Cascade"

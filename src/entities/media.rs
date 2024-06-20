@@ -20,10 +20,8 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-  #[sea_orm(has_many = "super::comment_on_comment::Entity")]
-  CommentOnComment,
-  #[sea_orm(has_many = "super::comment_on_media::Entity")]
-  CommentOnMedia,
+  #[sea_orm(has_many = "super::comment::Entity")]
+  Comment,
   #[sea_orm(has_many = "super::favorite::Entity")]
   Favorite,
   #[sea_orm(has_many = "super::like::Entity")]
@@ -40,15 +38,9 @@ pub enum Relation {
   User,
 }
 
-impl Related<super::comment_on_comment::Entity> for Entity {
+impl Related<super::comment::Entity> for Entity {
   fn to() -> RelationDef {
-    Relation::CommentOnComment.def()
-  }
-}
-
-impl Related<super::comment_on_media::Entity> for Entity {
-  fn to() -> RelationDef {
-    Relation::CommentOnMedia.def()
+    Relation::Comment.def()
   }
 }
 

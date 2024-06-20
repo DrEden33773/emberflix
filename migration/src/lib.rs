@@ -2,8 +2,7 @@ pub use sea_orm_migration::prelude::*;
 
 mod m20240613_000001_create_user;
 mod m20240613_120211_create_media;
-mod m20240613_121616_create_comment_on_media;
-mod m20240613_125108_create_comment_on_comment;
+mod m20240613_121616_create_comment;
 mod m20240613_132154_create_tag;
 mod m20240613_132238_create_like;
 mod m20240613_132253_create_favorite;
@@ -18,8 +17,7 @@ impl MigratorTrait for Migrator {
     vec![
       Box::new(m20240613_000001_create_user::Migration),
       Box::new(m20240613_120211_create_media::Migration),
-      Box::new(m20240613_121616_create_comment_on_media::Migration),
-      Box::new(m20240613_125108_create_comment_on_comment::Migration),
+      Box::new(m20240613_121616_create_comment::Migration),
       Box::new(m20240613_132154_create_tag::Migration),
       Box::new(m20240613_132238_create_like::Migration),
       Box::new(m20240613_132253_create_favorite::Migration),
