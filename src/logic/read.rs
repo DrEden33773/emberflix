@@ -1,6 +1,161 @@
 use crate::entities::{prelude::*, *};
 use sea_orm::{entity::prelude::*, *};
 
+pub async fn get_all_user(
+  db: &DatabaseConnection,
+  limit: Option<u64>,
+) -> Result<Vec<user::Model>, DbErr> {
+  User::find().limit(limit).all(db).await
+}
+
+pub async fn get_all_media(
+  db: &DatabaseConnection,
+  limit: Option<u64>,
+) -> Result<Vec<media::Model>, DbErr> {
+  Media::find().limit(limit).all(db).await
+}
+
+pub async fn get_all_tag(
+  db: &DatabaseConnection,
+  limit: Option<u64>,
+) -> Result<Vec<tag::Model>, DbErr> {
+  Tag::find().limit(limit).all(db).await
+}
+
+pub async fn get_all_comment_on_media(
+  db: &DatabaseConnection,
+  limit: Option<u64>,
+) -> Result<Vec<comment_on_media::Model>, DbErr> {
+  CommentOnMedia::find().limit(limit).all(db).await
+}
+
+pub async fn get_all_comment_on_comment(
+  db: &DatabaseConnection,
+  limit: Option<u64>,
+) -> Result<Vec<comment_on_comment::Model>, DbErr> {
+  CommentOnComment::find().limit(limit).all(db).await
+}
+
+pub async fn get_direct_comment_on_one_media(
+  db: &DatabaseConnection,
+  id: i64,
+  limit: Option<u64>,
+) -> Result<Vec<(media::Model, Vec<comment_on_media::Model>)>, DbErr> {
+  Media::find_by_id(id)
+    .find_with_related(CommentOnMedia)
+    .limit(limit)
+    .all(db)
+    .await
+}
+
+pub struct CommentPath {
+  pub comment_on_comment_list: Vec<comment_on_comment::Model>,
+  pub root_comment_on_media: comment_on_media::Model,
+}
+
+pub async fn get_full_comment_path_of(
+  db: &DatabaseConnection,
+  id: i64,
+) -> Result<CommentPath, DbErr> {
+  todo!()
+}
+
+pub async fn get_ones_subscribing_names(
+  db: &DatabaseConnection,
+  id: i64,
+  limit: Option<u64>,
+) -> Result<Vec<(user::Model, Vec<user::Model>)>, DbErr> {
+  User::find_by_id(id)
+    .find_with_linked(UserSubscribeUser)
+    .limit(limit)
+    .all(db)
+    .await
+}
+
+pub async fn get_ones_subscriber_names(
+  db: &DatabaseConnection,
+  id: i64,
+  limit: Option<u64>,
+) -> Result<Vec<(user::Model, Vec<user::Model>)>, DbErr> {
+  User::find_by_id(id)
+    .find_with_linked(UserSubscribedByUser)
+    .limit(limit)
+    .all(db)
+    .await
+}
+
+pub async fn get_ones_like_medias(
+  db: &DatabaseConnection,
+  id: i64,
+  limit: Option<u64>,
+) -> Result<Vec<(user::Model, Vec<media::Model>)>, DbErr> {
+  User::find_by_id(id)
+    .find_with_linked(UserLikeMedia)
+    .limit(limit)
+    .all(db)
+    .await
+}
+
+pub async fn get_media_likers(
+  db: &DatabaseConnection,
+  id: i64,
+  limit: Option<u64>,
+) -> Result<Vec<(media::Model, Vec<user::Model>)>, DbErr> {
+  Media::find_by_id(id)
+    .find_with_linked(MediaLikedByUser)
+    .limit(limit)
+    .all(db)
+    .await
+}
+
+pub async fn get_ones_favorite_medias(
+  db: &DatabaseConnection,
+  id: i64,
+  limit: Option<u64>,
+) -> Result<Vec<(user::Model, Vec<media::Model>)>, DbErr> {
+  User::find_by_id(id)
+    .find_with_linked(UserFavoriteMedia)
+    .limit(limit)
+    .all(db)
+    .await
+}
+
+pub async fn get_media_favorite_users(
+  db: &DatabaseConnection,
+  id: i64,
+  limit: Option<u64>,
+) -> Result<Vec<(media::Model, Vec<user::Model>)>, DbErr> {
+  Media::find_by_id(id)
+    .find_with_linked(MediaFavoriteByUser)
+    .limit(limit)
+    .all(db)
+    .await
+}
+
+pub async fn get_ones_subscribing_users(
+  db: &DatabaseConnection,
+  id: i64,
+  limit: Option<u64>,
+) -> Result<Vec<(user::Model, Vec<user::Model>)>, DbErr> {
+  User::find_by_id(id)
+    .find_with_linked(UserSubscribeUser)
+    .limit(limit)
+    .all(db)
+    .await
+}
+
+pub async fn get_ones_subscribers(
+  db: &DatabaseConnection,
+  id: i64,
+  limit: Option<u64>,
+) -> Result<Vec<(user::Model, Vec<user::Model>)>, DbErr> {
+  User::find_by_id(id)
+    .find_with_linked(UserSubscribedByUser)
+    .limit(limit)
+    .all(db)
+    .await
+}
+
 pub struct UserLikeMedia;
 
 impl Linked for UserLikeMedia {
@@ -29,92 +184,58 @@ impl Linked for MediaLikedByUser {
   }
 }
 
-pub async fn get_all_user(db: &DatabaseConnection) -> Result<Vec<user::Model>, DbErr> {
-  User::find().all(db).await
+pub struct UserFavoriteMedia;
+
+impl Linked for UserFavoriteMedia {
+  type FromEntity = user::Entity;
+  type ToEntity = media::Entity;
+
+  fn link(&self) -> Vec<sea_orm::LinkDef> {
+    vec![
+      favorite::Relation::User.def().rev(),
+      favorite::Relation::Media.def(),
+    ]
+  }
 }
 
-pub async fn get_all_media(db: &DatabaseConnection) -> Result<Vec<media::Model>, DbErr> {
-  Media::find().all(db).await
+pub struct MediaFavoriteByUser;
+
+impl Linked for MediaFavoriteByUser {
+  type FromEntity = media::Entity;
+  type ToEntity = user::Entity;
+
+  fn link(&self) -> Vec<sea_orm::LinkDef> {
+    vec![
+      favorite::Relation::Media.def().rev(),
+      favorite::Relation::User.def(),
+    ]
+  }
 }
 
-pub async fn get_all_tag(db: &DatabaseConnection) -> Result<Vec<tag::Model>, DbErr> {
-  Tag::find().all(db).await
+pub struct UserSubscribeUser;
+
+impl Linked for UserSubscribeUser {
+  type FromEntity = user::Entity;
+  type ToEntity = user::Entity;
+
+  fn link(&self) -> Vec<sea_orm::LinkDef> {
+    vec![
+      subscribe::Relation::SrcUser.def().rev(),
+      subscribe::Relation::DstUser.def(),
+    ]
+  }
 }
 
-pub async fn get_all_comment_on_media(
-  db: &DatabaseConnection,
-) -> Result<Vec<comment_on_media::Model>, DbErr> {
-  CommentOnMedia::find().all(db).await
-}
+pub struct UserSubscribedByUser;
 
-pub async fn get_all_comment_on_comment(
-  db: &DatabaseConnection,
-) -> Result<Vec<comment_on_comment::Model>, DbErr> {
-  CommentOnComment::find().all(db).await
-}
+impl Linked for UserSubscribedByUser {
+  type FromEntity = user::Entity;
+  type ToEntity = user::Entity;
 
-pub async fn get_ones_subscribing_names(
-  db: &DatabaseConnection,
-  id: i64,
-  limit: Option<u64>,
-) -> Result<Vec<user::Model>, DbErr> {
-  User::find()
-    .select_only()
-    .column(user::Column::DisplayName)
-    .join(
-      JoinType::InnerJoin,
-      user::Entity::belongs_to(subscribe::Entity)
-        .from(user::Column::Id)
-        .to(subscribe::Column::DstId)
-        .into(),
-    )
-    .filter(subscribe::Column::SrcId.eq(id))
-    .limit(limit)
-    .all(db)
-    .await
-}
-
-pub async fn get_ones_subscriber_names(
-  db: &DatabaseConnection,
-  id: i64,
-  limit: Option<u64>,
-) -> Result<Vec<user::Model>, DbErr> {
-  User::find()
-    .select_only()
-    .column(user::Column::DisplayName)
-    .join(
-      JoinType::InnerJoin,
-      user::Entity::belongs_to(subscribe::Entity)
-        .from(user::Column::Id)
-        .to(subscribe::Column::SrcId)
-        .into(),
-    )
-    .filter(subscribe::Column::DstId.eq(id))
-    .limit(limit)
-    .all(db)
-    .await
-}
-
-pub async fn get_ones_like_medias(
-  db: &DatabaseConnection,
-  id: i64,
-  limit: Option<u64>,
-) -> Result<Vec<(user::Model, Vec<media::Model>)>, DbErr> {
-  todo!()
-}
-
-pub async fn get_media_likers(
-  db: &DatabaseConnection,
-  id: i64,
-  limit: Option<u64>,
-) -> Result<Vec<(media::Model, Vec<user::Model>)>, DbErr> {
-  todo!()
-}
-
-pub async fn get_ones_subscribing_medias(
-  db: &DatabaseConnection,
-  id: i64,
-  limit: Option<u64>,
-) -> Result<Vec<(user::Model, Vec<media::Model>)>, DbErr> {
-  todo!()
+  fn link(&self) -> Vec<sea_orm::LinkDef> {
+    vec![
+      subscribe::Relation::DstUser.def().rev(),
+      subscribe::Relation::SrcUser.def(),
+    ]
+  }
 }

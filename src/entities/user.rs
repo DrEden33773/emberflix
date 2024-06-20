@@ -58,10 +58,7 @@ impl Related<super::like::Entity> for Entity {
 
 impl Related<super::media::Entity> for Entity {
   fn to() -> RelationDef {
-    super::like::Relation::Media.def()
-  }
-  fn via() -> Option<RelationDef> {
-    Some(super::like::Relation::User.def().rev())
+    Relation::Media.def()
   }
 }
 

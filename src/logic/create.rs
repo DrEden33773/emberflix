@@ -138,3 +138,29 @@ pub async fn user_like_media(
 
   Like::insert(model).exec(db).await
 }
+
+pub async fn user_favorite_media(
+  db: &DatabaseConnection,
+  user_id: i64,
+  media_id: i64,
+) -> Result<InsertResult<favorite::ActiveModel>, DbErr> {
+  let model = favorite::ActiveModel {
+    user_id: Set(user_id),
+    media_id: Set(media_id),
+  };
+
+  Favorite::insert(model).exec(db).await
+}
+
+pub async fn user_subscribe_user(
+  db: &DatabaseConnection,
+  src_id: i64,
+  dst_id: i64,
+) -> Result<InsertResult<subscribe::ActiveModel>, DbErr> {
+  let model = subscribe::ActiveModel {
+    src_id: Set(src_id),
+    dst_id: Set(dst_id),
+  };
+
+  Subscribe::insert(model).exec(db).await
+}

@@ -74,3 +74,27 @@ pub async fn cancel_many_like_by_id(
     .exec(db)
     .await
 }
+
+pub async fn cancel_many_favorite_by_id(
+  db: &DatabaseConnection,
+  user_id: i64,
+  media_ids: Vec<i64>,
+) -> Result<DeleteResult, DbErr> {
+  Favorite::delete_many()
+    .filter(Expr::col(favorite::Column::UserId).eq(user_id))
+    .filter(Expr::col(favorite::Column::MediaId).is_in(media_ids))
+    .exec(db)
+    .await
+}
+
+pub async fn cancel_many_subscribe_by_id(
+  db: &DatabaseConnection,
+  src_id: i64,
+  dst_ids: Vec<i64>,
+) -> Result<DeleteResult, DbErr> {
+  Subscribe::delete_many()
+    .filter(Expr::col(subscribe::Column::SrcId).eq(src_id))
+    .filter(Expr::col(subscribe::Column::DstId).is_in(dst_ids))
+    .exec(db)
+    .await
+}

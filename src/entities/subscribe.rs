@@ -20,7 +20,7 @@ pub enum Relation {
     on_update = "Cascade",
     on_delete = "Cascade"
   )]
-  User2,
+  DstUser,
   #[sea_orm(
     belongs_to = "super::user::Entity",
     from = "Column::SrcId",
@@ -28,7 +28,7 @@ pub enum Relation {
     on_update = "Cascade",
     on_delete = "Cascade"
   )]
-  User1,
+  SrcUser,
 }
 
 impl ActiveModelBehavior for ActiveModel {}
