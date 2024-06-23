@@ -19,4 +19,13 @@ once_cell = "1.19.0"
 # actix-web = "4"
 # slint = "1.6"
 crossterm = "0.27.0"
-ratatui = { version = "0.26.3", features = ["widget-calendar", "serde"] }
+ratatui = { version = "0.26.3", features = [
+  "widget-calendar",
+  "serde",
+  "crossterm",
+] }
+color-eyre = "0.6"
+itertools = "0.13"
+strum = { version = "0.26", features = ["derive"] }
+strum_macros = { version = "0.26.3" }
+palette = "0.7.3"

@@ -1,8 +1,13 @@
+pub mod app;
+pub mod colors;
+pub mod destroy;
 pub mod entities;
+pub mod errors;
 pub mod handler;
 pub mod logic;
-// pub mod router;
-// pub mod sub_entities;
+pub mod tabs;
+pub mod term;
+pub mod theme;
 
 use dotenvy::dotenv;
 use sea_orm::*;
